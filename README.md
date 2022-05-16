@@ -21,7 +21,7 @@ Section 2 will describe the process of generating the starts file
 
 Get the p (f2 + f3 proportion) and q (f1 proportion) values from the starts file 
 
-An example run:&nbsp;&nbsp;&nbsp;
+An example run:   
 python get_mean_and_std_f1.py starts_combined_dataset_above_90
 
 will give the following output:  
@@ -40,7 +40,7 @@ these values should be entered at the top of the frame_shift_detector.py file, s
 at the top of frame_shift_detector.py  
 update the following variables (p, q, p_f2, p_f3) based on the the output from get_mean_and_std_f1.py, see Section 1.2
 
-python frame_shift_detector.py starts_combined_dataset_above_90
+### python frame_shift_detector.py starts_combined_dataset_above_90
 
 ## 1.4 The Output of Frameshift Detector
 
@@ -67,7 +67,7 @@ putative minus one frameshifts
 putative dual encoding genes - alternative start sites
 
 
-python split_into_plus_minus_and_dual_files.py starts_combined_dataset_above_90 starts_combined_dataset_above_90_with_found_frameshifts plus_one_frameshifts.csv minus_one_frameshifts.csv putative_dual_encoding.csv 
+### python split_into_plus_minus_and_dual_files.py starts_combined_dataset_above_90 starts_combined_dataset_above_90_with_found_frameshifts plus_one_frameshifts.csv minus_one_frameshifts.csv putative_dual_encoding.csv 
 
 
 # Section 2. General directions for processing riboseq files and Generating the starts files #
@@ -116,5 +116,13 @@ The above distribution peaks at 28 nucleotide length segments, which is expected
 
 To process this dataset, we uncommented lines 259-269 in get_statistics_unique.py, and re-ran the command above, to generate a starts file that only contains 28 length reads and 29 length reads (properly adjusted).
 
+## 2.3 merging multiple start files
+
+to combine multiple ribosome profiling experiments for this analysis, the starts files can be merged
+
+### python merge_starts.py 
+
+at the top of the file, provide a list of infiles
+the outfile that we created was combined_starts_four_sets_above_90
 
 
