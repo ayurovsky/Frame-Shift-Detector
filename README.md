@@ -15,7 +15,7 @@ Gene Name
 Gene Nucletide Sequence  
 A comma separated list of integers, corresponding to the the number of ribosome profiling fragment starts at each nucleotide of the gene
 
-Section 3 will describe the process of generating the starts file 
+Section 2 will describe the process of generating the starts file 
 
 ## 1.2 Get genome-wide proportions of starts in frame 1 vs. frame 2 + frame 3
 
@@ -33,12 +33,12 @@ Total is: 48066725
 
 q here is 0.914, and p is (1-0.914) = 0.086
 
-these values should be entered at the top of the frame_shift_detector.py file, see section 1.3. 
+these values should be entered at the top of the frame_shift_detector.py file, see Section 1.3. 
 
 ## 1.3  Run Frameshift Detector
 
 at the top of frame_shift_detector.py  
-update the following variables (p, q, p_f2, p_f3) based on the the output from get_mean_and_std_f1.py, see section 1.2
+update the following variables (p, q, p_f2, p_f3) based on the the output from get_mean_and_std_f1.py, see Section 1.2
 
 python frame_shift_detector.py starts_combined_dataset_above_90
 
@@ -58,4 +58,17 @@ direction: plus or minus
 before_gene_start: if yes, this frameshift should not count as plus or minus, as it is likely an un-annotated alternative gene start  
 percent_shifted: into alternative frames  
 num_reads: number of starts used in the p-value calculation 
+
+## 1.5 Post-Processing
+
+this script cleans up the frameshift detector ouput and generates three output files:   
+putative plus one frameshifts
+putative minus one frameshifts
+putative dual encoding genes - alternative start sites
+
+
+python split_into_plus_minus_and_dual_files.py starts_combined_dataset_above_90 starts_combined_dataset_above_90_with_found_frameshifts plus_one_frameshifts.csv minus_one_frameshifts.csv putative_dual_encoding.csv 
+
+
+# Section 2. Generating the starts files #
 
