@@ -70,5 +70,51 @@ putative dual encoding genes - alternative start sites
 python split_into_plus_minus_and_dual_files.py starts_combined_dataset_above_90 starts_combined_dataset_above_90_with_found_frameshifts plus_one_frameshifts.csv minus_one_frameshifts.csv putative_dual_encoding.csv 
 
 
-# Section 2. Generating the starts files #
+# Section 2. General directions for processing riboseq files and Generating the starts files #
+
+## 2.1 Process the Fastq files and do read mapping
+
+process the fastq files to remove bad quality reads, adaptor sequences, etc with fastx_clipper or other tools
+
+map the reads to the reference;  we used bowtie2 end-to-end mapping, other mappers may be used 
+
+## 2.2  Figuring out the distribution of reads in a sam file and generating the starts file
+
+The logic is in the get_statistics_unique.py  This file has code specific to processing S. cerevisiae sam files mapped with bowtie2-2.1.0 and should only be used as a general guide.  
+
+The sam files are not included in the repository, but other input files have been included as examples:
+
+codons.txt: synonymous codons mapping
+
+s_cerevisae_orf_coding_no_Mito_no_Plasmid.fasta: gene coding nucleotide sequences
+
+saccharomyces_cerevisiae_R64-1-1_20110208.fa: chromosome nucleotide sequences
+
+saccharomyces_cerevisiae_R64-1-1_20110208.gtf: annotation file 
+
+The processing of the sam file starts at line 200.  Only high quality uniquely mapped reads should be kept.
+
+Lines 366-391 compute the read length distributions, and tally up the read starts for all the nucleotides of the genes. Lines 400-end output the starts file
+
+To get the distribution of lengths, first consider all the unique high quality reads: 
+
+### python get_statistics_unique.py codons.txt s_cerevisae_orf_coding_no_Mito_no_Plasmid.fasta saccharomyces_cerevisiae_R64-1-1_20110208.fa saccharomyces_cerevisiae_R64-1-1_20110208.gtf your_sam_file.sam your_output_starts_file > output_messages
+
+the output_messages file will have the length distributions printed at the end, looking something like this:
+
+Length 25 359930 reads,  1: 0.82 2: 0.09 3: 0.1                                                                                                                                       
+Length 26 508683 reads,  1: 0.19 2: 0.21 3: 0.61                                                                                                                                      
+Length 27 2092667 reads,  1: 0.24 2: 0.74 3: 0.03                                                                                                                                     
+Length 28 10647372 reads,  1: 0.93 2: 0.02 3: 0.05                                                                                                                                    
+Length 29 10397157 reads,  1: 0.08 2: 0.02 3: 0.91                                                                                                                                    
+Length 30 3175640 reads,  1: 0.03 2: 0.71 3: 0.26                                                                                                                                     
+Length 31 393889 reads,  1: 0.21 2: 0.56 3: 0.23                                                                                                                                      
+Length 32 47626 reads,  1: 0.17 2: 0.58 3: 0.25                                                                                                                                       
+Length 33 7493 reads,  1: 0.21 2: 0.62 3: 0.17  
+
+The above distribution peaks at 28 nucleotide length segments, which is expected for the current ribosome profiling datasets. For the above dataset, only fragments of lengths 28 and 29 have an overwhelming majority of read starts (>=90% in a single frame), and so we should only consider those read classes.  For the 28 length reads, the majority of read starts are in frame 1, so no adjustment needs to be made.  Length 29 reads have majority in frame 3, which means that the read starts need to be adjusted.    
+
+To process this dataset, we uncommented lines 259-269 in get_statistics_unique.py, and re-ran the command above, to generate a starts file that only contains 28 length reads and 29 length reads (properly adjusted).
+
+
 
